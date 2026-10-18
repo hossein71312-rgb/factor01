@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=860, user-scalable=yes">
+<title>فاکتور</title>
+<style>
+@font-face{font-family:Vazirmatn;src:url(Vazirmatn-Regular.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:Vazirmatn;src:url(Vazirmatn-Bold.woff2) format("woff2");font-weight:700;font-display:swap}
+*{box-sizing:border-box;margin:0;padding:0}
+:root,body[data-theme="forest"]{--font:13px;--blue:#2e7d32;--lb:#e8f5e9;--hb:#a5d6a7;--sum:#fff59d;--sky:#dff1fa;--sky2:#fff8e1;--sun:#ffd54f;--m1:#b7d3c0;--m2:#78b08a;--m3:#2e7d32;--bg:#dcebdd}
+body[data-theme="sea"]{--blue:#00838f;--lb:#e0f7fa;--hb:#80deea;--sum:#fff59d;--sky:#e1f5fe;--sky2:#f1fbff;--sun:#fff176;--m1:#a9d2f5;--m2:#4db6ac;--m3:#00695c;--bg:#d6ecf2}
+body[data-theme="autumn"]{--blue:#b4531a;--lb:#fff3e0;--hb:#ffcc80;--sum:#fff59d;--sky:#ffe9d2;--sky2:#fff8ee;--sun:#ff8a65;--m1:#e8c4a0;--m2:#cf8a50;--m3:#8d4a1b;--bg:#f1e1cf}
+body{font-family:Vazirmatn,Tahoma,sans-serif;background:linear-gradient(180deg,var(--bg),#f7f7f2);color:#000;min-height:100vh}
+.controls{position:sticky;top:0;z-index:50;display:flex;gap:6px;justify-content:center;padding:10px;flex-wrap:wrap;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.15)}
+.controls button,.controls select{padding:7px 12px;font:inherit;font-size:13px;cursor:pointer;border:1px solid #9aa;border-radius:6px;background:#fff}
+.controls button:hover{background:#dbeafe}
+.controls .primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.controls .primary:hover{background:#0d47a1}
+:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+.wrap{overflow-x:auto;padding:14px 8px}
+.invoice{width:210mm;min-height:297mm;margin:0 auto;background:#fff;padding:12mm;border:3px solid var(--blue);font-size:var(--font)}
+.invoice{border-radius:12px}
+.header{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;border:2px solid var(--blue);border-radius:10px;padding:14px 14px 34px;margin-bottom:12px;gap:8px;background:linear-gradient(180deg,var(--sky),var(--sky2))}
+.header>:not(.art){position:relative;z-index:1}
+.art{position:absolute;left:0;bottom:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.header-meta input{background:rgba(255,255,255,.85)}
+.logo-box{background:rgba(255,255,255,.8);width:90px;height:60px;border:1px dashed #999;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;flex-shrink:0}
+.logo-box img{width:100%;height:100%;object-fit:contain}
+.logo-box span{font-size:11px;color:#666}
+.remove-logo{position:absolute;top:1px;right:1px;background:red;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;line-height:18px;text-align:center;cursor:pointer;display:none;border:none}
+.header-center{flex:1;text-align:center}
+.header-center h1{font-size:22px;outline:none}
+.header-meta{font-size:12px;white-space:nowrap}
+.header-meta input{width:120px;border:1px solid #000;padding:2px;text-align:center;font:inherit;margin-top:3px}
+.party{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.party>div{border:1px solid #000;padding:6px;min-height:80px}
+.party b{display:block;background:var(--lb);padding:2px 4px;margin-bottom:4px}
+.party label{display:inline-block;width:40px}
+.party input{border:none;border-bottom:1px dashed #aaa;width:calc(100% - 46px);font:inherit;padding:2px;background:transparent;margin-bottom:2px}
+.party input:focus{background:#f0f9ff}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+th,td{border:1px solid #000;padding:4px;text-align:center;word-break:break-word}
+th{background:var(--hb)}
+.cell-input{width:100%;border:none;text-align:center;font:inherit;font-size:var(--font);background:transparent}
+.cell-input:focus{background:var(--lb)}
+.sum td{background:var(--sum);font-weight:bold}
+.words td{font-size:12px;text-align:right;background:#fafafa}
+.del-btn{font-size:11px;padding:2px 5px;border:1px solid #aaa;background:#fff;cursor:pointer;border-radius:3px}
+.del-btn:hover{background:#fee2e2}
+.bottom{display:grid;grid-template-columns:0.8fr 1.2fr;gap:8px;margin-top:15px}
+.bottom div{border:1px solid #000;padding:8px;min-height:90px;outline:none}
+.bottom #payBox{outline:none}
+.payment-table{margin-top:6px;font-size:12px}
+.payment-table th,.payment-table td{padding:5px}
+.payment-table .pay-input{font-size:12px;direction:ltr;min-width:0;width:100%;white-space:nowrap;overflow-x:auto}
+.payment-table .pay-input::placeholder{direction:rtl;text-align:center;color:#888}
+.signatures{display:flex;justify-content:space-between;margin-top:35px}
+.sign-box{width:45%;text-align:center}
+.sign-line{margin-top:45px;border-top:1px solid #000}
+.footer-creator{position:relative;overflow:hidden;margin-top:40px;padding:12px 0 34px;border-radius:10px;text-align:center;font-size:11px;color:#333;line-height:1.8;background:linear-gradient(180deg,var(--sky2),var(--sky))}
+.footer-creator>:not(.art){position:relative;z-index:1}
+.footer-creator b{color:var(--blue)}
+.exporting .np,.exporting .remove-logo{display:none!important}
+.exporting .logo-box:not(.has){border:none}
+.exporting .logo-box:not(.has) span{display:none}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:8px;padding:20px;max-width:500px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,.25)}
+.modal h2{margin-bottom:10px;font-size:16px;color:var(--blue)}
+.modal input{width:100%;padding:7px;margin-bottom:8px;border:1px solid #bbb;border-radius:4px;font:inherit}
+.modal-list{list-style:none;max-height:300px;overflow-y:auto;border:1px solid #ddd;border-radius:4px}
+.modal-list li{padding:9px 12px;border-bottom:1px solid #eee;font-size:13px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.modal-list li:hover{background:var(--lb)}
+.modal-list .info{flex:1;cursor:pointer}
+.modal-list small{color:#666;display:block}
+.del-invoice{color:red;font-size:11px;padding:2px 6px;border:1px solid red;border-radius:3px;background:#fff;cursor:pointer}
+.modal-footer{display:flex;justify-content:flex-end;margin-top:12px}
+.modal-footer button{padding:6px 14px;font:inherit;border-radius:4px;border:1px solid #888;cursor:pointer;background:#fff}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--blue);color:#fff;padding:10px 22px;border-radius:24px;font-size:13px;z-index:2000;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+.android-only{display:none!important}
+body.android .android-only{display:inline-block!important}
+body.android .controls{gap:10px;padding:14px}
+body.android .controls button,body.android .controls select{font-size:24px;padding:12px 18px;border-radius:10px}
+@page{size:A4;margin:0}
+@media print{
+  .controls,.modal-overlay,.toast{display:none!important}
+  body{background:#fff}.wrap{padding:0;overflow:visible}
+  .invoice{border:none;margin:0;padding:10mm;width:100%}
+  .np,.remove-logo{display:none!important}
+  .logo-box:not(.has){border:none}.logo-box:not(.has) span{display:none}
+  tr{break-inside:avoid}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<div class="controls">
+  <button class="primary" onclick="InvoiceApp.addRow()">➕ ردیف جدید</button>
+  <button class="primary" onclick="InvoiceApp.saveAll()" title="Ctrl+S">💾 ذخیره</button>
+  <button onclick="InvoiceApp.newInvoice()">🆕 فاکتور جدید</button>
+  <button onclick="InvoiceApp.showLoadDialog()">📂 فاکتورهای ذخیره‌شده</button>
+  <button onclick="InvoiceApp.printPage()">🖨 چاپ</button>
+  <button onclick="InvoiceApp.savePDF()">📄 PDF</button>
+  <button class="android-only" onclick="InvoiceApp.sharePDF()">📤 اشتراک PDF</button>
+  <button onclick="InvoiceApp.exportJSON()">⬇️ خروجی JSON</button>
+  <button onclick="document.getElementById('importInput').click()">⬆️ ورود JSON</button>
+  <select id="themeSel" aria-label="تم رنگی"><option value="forest">🌲 جنگل</option><option value="sea">🌊 دریا</option><option value="autumn">🍂 پاییز</option></select>
+  <select id="unitSel" aria-label="واحد پول"><option>ریال</option><option>تومان</option></select>
+  <input type="file" id="importInput" accept=".json,application/json" hidden>
+</div>
+
+<div class="wrap">
+<div class="invoice" id="invoice">
+  <div class="header">
+    <svg class="art" viewBox="0 0 800 120" preserveAspectRatio="none" aria-hidden="true">
+      <circle cx="90" cy="34" r="20" fill="var(--sun)" opacity=".9"/>
+      <path d="M0 95 L110 45 L190 85 L300 30 L420 90 L530 50 L650 88 L800 40 L800 120 L0 120Z" fill="var(--m1)"/>
+      <path d="M0 108 Q120 70 240 100 T480 98 T720 96 T800 90 L800 120 L0 120Z" fill="var(--m2)"/>
+      <path d="M0 116 Q200 96 400 112 T800 108 L800 120 L0 120Z" fill="var(--m3)"/>
+      <g fill="var(--m3)"><path d="M40 110 l9-28 9 28z"/><path d="M60 112 l7-22 7 22z"/><path d="M700 110 l9-30 9 30z"/><path d="M722 112 l7-24 7 24z"/><path d="M745 110 l8-26 8 26z"/></g>
+    </svg>
+    <div class="logo-box" id="logoBox" title="کلیک برای آپلود لوگو" role="button" tabindex="0">
+      <span id="logoHint">لوگو</span>
+      <img id="logoImg" style="display:none" alt="لوگو">
+      <button class="remove-logo" id="removeLogoBtn" aria-label="حذف لوگو">✖</button>
+      <input type="file" id="logoInput" accept="image/*" hidden>
+    </div>
+    <div class="header-center"><h1 contenteditable id="titleEl" spellcheck="false">پیش فاکتور</h1></div>
+    <div class="header-meta">
+      شماره فاکتور: <input id="invoiceNo" readonly aria-label="شماره فاکتور"><br>
+      تاریخ: <input id="invoiceDate" aria-label="تاریخ">
+    </div>
+  </div>
+
+  <div class="party">
+    <div><b>مشخصات فروشنده</b>
+      <label>نام:</label><input id="sellerName"><br>
+      <label>تلفن:</label><input id="sellerPhone" type="tel"><br>
+      <label>آدرس:</label><input id="sellerAddress">
+    </div>
+    <div><b>مشخصات خریدار</b>
+      <label>نام:</label><input id="buyerName"><br>
+      <label>تلفن:</label><input id="buyerPhone" type="tel"><br>
+      <label>آدرس:</label><input id="buyerAddress">
+    </div>
+  </div>
+
+  <table>
+    <thead><tr>
+      <th style="width:6%">ردیف</th><th style="width:22%">شرح</th><th style="width:10%">متراژ</th>
+      <th style="width:8%">تعداد</th><th style="width:12%">متراژ کل</th><th style="width:14%">فی</th>
+      <th style="width:20%">مبلغ</th><th class="np" style="width:6%">حذف</th>
+    </tr></thead>
+    <tbody id="rowsBody"></tbody>
+    <tfoot>
+      <tr class="sum"><td colspan="3">جمع</td><td id="sumQty">۰</td><td id="sumMeter">۰</td><td></td><td id="sumTotal">۰</td><td class="np"></td></tr>
+      <tr><td colspan="6">تخفیف</td><td><input class="cell-input money" id="discount" aria-label="تخفیف"></td><td class="np"></td></tr>
+      <tr><td colspan="6">مانده قبلی</td><td><input class="cell-input money" id="prevDebt" aria-label="مانده قبلی"></td><td class="np"></td></tr>
+      <tr><td colspan="6">بارگیری</td><td><input class="cell-input money" id="prevDebt2" aria-label="بارگیری"></td><td class="np"></td></tr>
+      <tr><td colspan="6">کرایه حمل</td><td><input class="cell-input money" id="haml" aria-label="کرایه حمل"></td><td class="np"></td></tr>
+      <tr class="sum"><td colspan="6">مبلغ نهایی</td><td id="finalTotal">۰</td><td class="np"></td></tr>
+      <tr><td colspan="6">پرداخت شده</td><td><input class="cell-input money" id="prevDebtPaid" aria-label="پرداخت شده"></td><td class="np"></td></tr>
+      <tr class="sum"><td colspan="6">مانده حساب</td><td id="balance">۰</td><td class="np"></td></tr>
+      <tr class="words"><td colspan="7" id="wordsCell"></td><td class="np"></td></tr>
+    </tfoot>
+  </table>
+
+  <div class="bottom">
+    <div contenteditable id="descBox" spellcheck="false"><b>توضیحات:</b><br></div>
+    <div id="payBox">
+      <b>اطلاعات پرداخت:</b>
+      <table class="payment-table" aria-label="اطلاعات پرداخت">
+        <thead><tr><th>نوع</th><th>شماره / اطلاعات</th></tr></thead>
+        <tbody>
+          <tr><td>شماره کارت</td><td><input class="cell-input pay-input" id="cardNumber" inputmode="numeric" placeholder="شماره کارت"></td></tr>
+          <tr><td>شماره شبا</td><td><input class="cell-input pay-input" id="shebaNumber" placeholder="IR..."></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="signatures">
+    <div class="sign-box"><b>امضای فروشنده</b><div class="sign-line"></div></div>
+    <div class="sign-box"><b>امضای خریدار</b><div class="sign-line"></div></div>
+  </div>
+
+  <div class="footer-creator">
+    <b>ساخته شده توسط:</b> موبایل آسیا<br>
+    <span>تلفن: 09147699160 | ایمیل: hossein71310@gmail.com</span>
+    <svg class="art" viewBox="0 0 800 60" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 40 Q150 10 300 38 T600 34 T800 28 L800 60 L0 60Z" fill="var(--m1)"/>
+      <path d="M0 52 Q200 30 400 50 T800 46 L800 60 L0 60Z" fill="var(--m2)"/>
+    </svg>
+  </div>
+</div>
+</div>
+
+<div class="modal-overlay" id="loadModal" role="dialog" aria-modal="true" aria-label="فاکتورهای ذخیره‌شده">
+  <div class="modal">
+    <h2>📂 فاکتورهای ذخیره‌شده</h2>
+    <input id="searchBox" placeholder="جستجو بر اساس نام خریدار یا شماره..." aria-label="جستجو">
+    <ul class="modal-list" id="invoiceList"></ul>
+    <div class="modal-footer"><button onclick="InvoiceApp.closeModal()">بستن</button></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="html2canvas.min.js"></script>
+<script src="jspdf.umd.min.js"></script>
+<script>
+const InvoiceApp = (() => {
+'use strict';
+const $ = id => document.getElementById(id);
+const PFX = 'inv_', DRAFT = 'inv_draft', MAX_LOGO_KB = 200;
+const MONEY = ['discount','prevDebt','prevDebt2','haml','prevDebtPaid'];
+
+/* ---------- ابزارها ---------- */
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toEN(v) {
+  if (v == null) return 0;
+  let s = String(v);
+  '۰۱۲۳۴۵۶۷۸۹'.split('').forEach((d,i) => s = s.replaceAll(d,i));
+  '٠١٢٣٤٥٦٧٨٩'.split('').forEach((d,i) => s = s.replaceAll(d,i));
+  return Number(s.replace(/[,،٬\s]/g,'').replace('٫','.')) || 0;
+}
+const fa = n => n.toLocaleString('fa-IR', {maximumFractionDigits: 2});
+const unit = () => $('unitSel').value;
+const money = n => fa(n) + ' ' + unit();
+const today = () => new Intl.DateTimeFormat('fa-IR',{year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+const store = {
+  get(k){ try { return JSON.parse(localStorage.getItem(k)); } catch(e){ return null; } },
+  set(k,v){ try { localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v)); return true; } catch(e){ return false; } },
+  del(k){ try { localStorage.removeItem(k); } catch(e){} }
+};
+let toastT;
+function toast(msg, ms = 2500) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), ms);
+}
+
+/* عدد به حروف */
+const ONES=['','یک','دو','سه','چهار','پنج','شش','هفت','هشت','نه','ده','یازده','دوازده','سیزده','چهارده','پانزده','شانزده','هفده','هجده','نوزده'];
+const TENS=['','','بیست','سی','چهل','پنجاه','شصت','هفتاد','هشتاد','نود'];
+const HUND=['','یکصد','دویست','سیصد','چهارصد','پانصد','ششصد','هفتصد','هشتصد','نهصد'];
+const SCALE=['','هزار','میلیون','میلیارد','تریلیون'];
+function w3(n){
+  const h = Math.floor(n/100), r = n%100, p = [];
+  if (h) p.push(HUND[h]);
+  if (r) p.push(r < 20 ? ONES[r] : TENS[Math.floor(r/10)] + (r%10 ? ' و ' + ONES[r%10] : ''));
+  return p.join(' و ');
+}
+function words(n){
+  n = Math.round(Math.abs(n));
+  if (!n) return 'صفر';
+  const parts = []; let i = 0;
+  while (n > 0 && i < SCALE.length) {
+    const c = n % 1000;
+    if (c) parts.unshift(w3(c) + (SCALE[i] ? ' ' + SCALE[i] : ''));
+    n = Math.floor(n/1000); i++;
+  }
+  return parts.join(' و ');
+}
+
+/* شماره فاکتور: فقط هنگام ساخت فاکتور جدید مصرف می‌شود */
+function nextNo(){
+  let n = Number(localStorage.getItem('invoice_counter') || 0) + 1;
+  while (localStorage.getItem(PFX + String(n).padStart(4,'0'))) n++;
+  store.set('invoice_counter', String(n));
+  return String(n).padStart(4,'0');
+}
+
+/* ---------- لوگو ---------- */
+function setLogo(url, persist = true){
+  const has = !!url;
+  $('logoImg').src = url || '';
+  $('logoImg').style.display = has ? 'block' : 'none';
+  $('logoHint').style.display = has ? 'none' : 'block';
+  $('removeLogoBtn').style.display = has ? 'block' : 'none';
+  $('logoBox').classList.toggle('has', has);
+  if (!persist) return;
+  if (has) store.set('logo', url); else store.del('logo');
+}
+function initLogo(){
+  $('logoInput').onchange = e => {
+    const f = e.target.files[0]; if (!f) return;
+    if (f.size > MAX_LOGO_KB * 1024) { toast(`⚠️ حجم لوگو نباید بیشتر از ${MAX_LOGO_KB} کیلوبایت باشد.`); return; }
+    const r = new FileReader(); r.onload = () => { setLogo(r.result); autosave(); }; r.readAsDataURL(f);
+  };
+  $('removeLogoBtn').onclick = e => { e.stopPropagation(); setLogo(null); };
+  $('logoBox').onclick = e => { if (e.target !== $('removeLogoBtn')) $('logoInput').click(); };
+  $('logoBox').onkeydown = e => { if (e.key === 'Enter') $('logoInput').click(); };
+}
+
+/* ---------- ردیف‌ها ---------- */
+function fmtInput(el){ const v = toEN(el.value); el.value = v ? fa(v) : ''; }
+function addRow(d = {}, focus = true){
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td class="row-idx"></td>
+    <td><input class="cell-input row-desc" value="${esc(d.desc)}" aria-label="شرح"></td>
+    <td><input class="cell-input row-m" inputmode="decimal" value="${esc(d.m)}" aria-label="متراژ"></td>
+    <td><input class="cell-input row-q" inputmode="decimal" value="${esc(d.q)}" aria-label="تعداد"></td>
+    <td class="row-mTot">۰</td>
+    <td><input class="cell-input row-price money" inputmode="numeric" value="${d.price ? fa(toEN(d.price)) : ''}" aria-label="فی"></td>
+    <td class="row-total">۰</td>
+    <td class="np"><button class="del-btn" aria-label="حذف ردیف">✖</button></td>`;
+  tr.querySelector('.del-btn').onclick = () => { tr.remove(); calc(); autosave(); };
+  const meter = tr.querySelector('.row-m');
+  // در متراژ، پس از وارد کردن رقم اول به‌صورت خودکار ممیز درج می‌شود؛
+  // رقم‌های بعدی اعشار را می‌سازند. مثال: 125 ← 1.25
+  meter.addEventListener('input', () => {
+    const raw = meter.value.replace(/[۰-۹٠-٩]/g, ch => {
+      const faDigits = '۰۱۲۳۴۵۶۷۸۹', arDigits = '٠١٢٣٤٥٦٧٨٩';
+      const i = faDigits.indexOf(ch);
+      return i >= 0 ? String(i) : String(arDigits.indexOf(ch));
+    }).replace(/[^0-9]/g, '');
+    const formatted = raw.length > 1
+      ? raw[0] + '.' + raw.slice(1, 3)
+      : raw;
+    meter.value = formatted;
+    calc();
+    autosave();
+  });
+  meter.addEventListener('blur', () => {
+    const v = toEN(meter.value);
+    meter.value = v ? fa(v) : '';
+    calc();
+  });
+  const price = tr.querySelector('.row-price');
+  price.addEventListener('blur', () => fmtInput(price));
+  price.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !tr.nextElementSibling) { e.preventDefault(); addRow(); }
+  });
+  $('rowsBody').appendChild(tr);
+  calc();
+  if (focus) tr.querySelector('.row-desc').focus();
+}
+
+/* ---------- محاسبه ---------- */
+const val = id => toEN($(id).value);
+function calc(){
+  let sum = 0, qs = 0, ms = 0;
+  document.querySelectorAll('#rowsBody tr').forEach((tr, i) => {
+    tr.querySelector('.row-idx').textContent = fa(i + 1);
+    const m = toEN(tr.querySelector('.row-m').value), q = toEN(tr.querySelector('.row-q').value);
+    const mt = m * q, tot = mt * toEN(tr.querySelector('.row-price').value);
+    tr.querySelector('.row-mTot').textContent = fa(mt);
+    tr.querySelector('.row-total').textContent = money(tot);
+    sum += tot; qs += q; ms += mt;
+  });
+  const final = sum - val('discount') + val('prevDebt') + val('prevDebt2') + val('haml');
+  const bal = final - val('prevDebtPaid');
+  $('sumQty').textContent = fa(qs);
+  $('sumMeter').textContent = fa(ms);
+  $('sumTotal').textContent = money(sum);
+  $('finalTotal').textContent = money(final);
+  $('balance').textContent = money(bal);
+  $('wordsCell').textContent = 'مبلغ نهایی به حروف: ' + (final < 0 ? 'منفی ' : '') + words(final) + ' ' + unit();
+}
+
+/* ---------- داده ---------- */
+function collect(){
+  const d = {
+    title: $('titleEl').textContent, invoiceNo: $('invoiceNo').value, invoiceDate: $('invoiceDate').value,
+    unit: unit(), savedAt: Date.now(),
+    seller: { name: $('sellerName').value, phone: $('sellerPhone').value, address: $('sellerAddress').value },
+    buyer: { name: $('buyerName').value, phone: $('buyerPhone').value, address: $('buyerAddress').value },
+    rows: [...$('rowsBody').children].map(tr => ({
+      desc: tr.querySelector('.row-desc').value, m: tr.querySelector('.row-m').value,
+      q: tr.querySelector('.row-q').value, price: toEN(tr.querySelector('.row-price').value)
+    })),
+    desc: $('descBox').innerHTML,
+     pay: {
+       cardNumber: $('cardNumber').value,
+       shebaNumber: $('shebaNumber').value
+     }
+  };
+  MONEY.forEach(id => d[id] = val(id));
+  d.total = $('finalTotal').textContent;
+  return d;
+}
+function apply(d){
+  $('titleEl').textContent = d.title || 'پیش فاکتور';
+  $('invoiceNo').value = d.invoiceNo || '';
+  $('invoiceDate').value = d.invoiceDate || today();
+  if (d.unit) $('unitSel').value = d.unit;
+  const s = d.seller || {}, b = d.buyer || {};
+  $('sellerName').value = s.name || ''; $('sellerPhone').value = s.phone || ''; $('sellerAddress').value = s.address || '';
+  $('buyerName').value = b.name || ''; $('buyerPhone').value = b.phone || ''; $('buyerAddress').value = b.address || '';
+  $('rowsBody').innerHTML = '';
+  (d.rows || []).forEach(r => addRow(r, false));
+  if (!(d.rows || []).length) addRow({}, false);
+  MONEY.forEach(id => { const v = toEN(d[id]); $(id).value = v ? fa(v) : ''; });
+  $('descBox').innerHTML = d.desc || '<b>توضیحات:</b><br>';
+  if (d.pay && typeof d.pay === 'object') {
+    $('cardNumber').value = d.pay.cardNumber || '';
+    $('shebaNumber').value = d.pay.shebaNumber || '';
+  } else {
+    $('cardNumber').value = '';
+    $('shebaNumber').value = '';
+  }
+  calc();
+}
+
+/* ذخیره‌ی خودکار پیش‌نویس */
+let autoT;
+function autosave(){ clearTimeout(autoT); autoT = setTimeout(() => store.set(DRAFT, collect()), 500); }
+
+/* ---------- ذخیره / بارگذاری ---------- */
+function saveAll(){
+  const d = collect();
+  if (!d.buyer.name.trim()) { toast('⚠️ نام خریدار را وارد کنید.'); $('buyerName').focus(); return; }
+  if (!d.invoiceNo) d.invoiceNo = $('invoiceNo').value = nextNo();
+  if (store.set(PFX + d.invoiceNo, d)) { store.del(DRAFT); toast(`✅ فاکتور ${d.invoiceNo} ذخیره شد.`); }
+  else toast('⚠️ حافظه مرورگر پر است. از «خروجی JSON» استفاده کنید.');
+}
+function listSaved(){
+  const out = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k.startsWith(PFX) && k !== DRAFT) { const d = store.get(k); if (d) out.push({ key: k, d }); }
+  }
+  return out.sort((a,b) => (b.d.savedAt || 0) - (a.d.savedAt || 0));
+}
+function renderList(){
+  const q = $('searchBox').value.trim(), list = $('invoiceList');
+  const items = listSaved().filter(({d}) => !q || (d.buyer?.name || '').includes(q) || (d.invoiceNo || '').includes(toEN(q) ? String(toEN(q)).padStart(4,'0') : q));
+  list.innerHTML = items.length ? '' : '<li>موردی یافت نشد.</li>';
+  items.forEach(({key, d}) => {
+    const li = document.createElement('li');
+    li.innerHTML = `<div class="info"><b>${esc(d.buyer?.name || 'بدون نام')}</b>
+      <small>شماره ${esc(d.invoiceNo)} | ${esc(d.invoiceDate)} | ${esc(d.total || '')}</small></div>
+      <button class="del-invoice" aria-label="حذف">🗑 حذف</button>`;
+    li.querySelector('.info').onclick = () => { apply(d); store.del(DRAFT); closeModal(); toast('✅ فاکتور بارگذاری شد.'); };
+    li.querySelector('.del-invoice').onclick = () => {
+      if (!confirm(`فاکتور «${d.buyer?.name}» حذف شود؟`)) return;
+      store.del(key); renderList();
+    };
+    list.appendChild(li);
+  });
+}
+function showLoadDialog(){
+  if (!listSaved().length) { toast('هیچ فاکتوری ذخیره نشده است.'); return; }
+  $('searchBox').value = ''; renderList();
+  $('loadModal').classList.add('open'); $('searchBox').focus();
+}
+function closeModal(){ $('loadModal').classList.remove('open'); }
+
+function newInvoice(){
+  if (!confirm('فاکتور جدید ساخته شود؟ اطلاعات فروشنده حفظ می‌شود. (تغییرات ذخیره‌نشده از بین می‌رود)')) return;
+  const cur = collect();
+  apply({
+    seller: cur.seller,
+    unit: cur.unit,
+    desc: cur.desc,
+    pay: cur.pay,
+    invoiceNo: nextNo(),
+    invoiceDate: today()
+  });
+  store.del(DRAFT); toast('🆕 فاکتور جدید آماده است.');
+}
+
+/* ---------- JSON ---------- */
+function download(blob, name){
+  if (window.AndroidBridge) {
+    const r = new FileReader();
+    r.onload = () => AndroidBridge.saveFile(String(r.result).split(',')[1], name, blob.type || 'application/octet-stream');
+    r.readAsDataURL(blob); return;
+  }
+  const url = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+function exportJSON(){
+  const d = collect();
+  download(new Blob([JSON.stringify(d, null, 2)], {type:'application/json'}), `invoice_${d.invoiceNo}_${d.buyer.name || 'نامشخص'}.json`);
+  toast('⬇️ فایل JSON دانلود شد.');
+}
+function importJSON(file){
+  const r = new FileReader();
+  r.onload = () => {
+    try { const d = JSON.parse(r.result); if (!d || typeof d !== 'object') throw 0; apply(d); autosave(); toast('✅ فاکتور وارد شد. برای نگه‌داری، ذخیره کنید.'); }
+    catch(e){ toast('⚠️ فایل معتبر نیست.'); }
+  };
+  r.readAsText(file);
+}
+
+/* ---------- PDF ---------- */
+async function buildPDF(){
+  const inv = $('invoice'), name = $('buyerName').value.trim() || 'بدون-نام';
+  if (!window.html2canvas || !window.jspdf) { toast('⚠️ کتابخانه PDF بارگذاری نشده.'); return null; }
+  toast('⏳ در حال ساخت PDF...', 8000);
+  inv.classList.add('exporting');
+  try {
+    const canvas = await html2canvas(inv, { scale: 2, useCORS: true, backgroundColor: '#fff', logging: false });
+    const pdf = new window.jspdf.jsPDF('p','mm','a4');
+    const W = 210, H = 297, imgH = canvas.height * W / canvas.width, img = canvas.toDataURL('image/jpeg', .95);
+    let pos = 0, left = imgH;
+    pdf.addImage(img, 'JPEG', 0, pos, W, imgH); left -= H;
+    while (left > 0) { pos -= H; pdf.addPage(); pdf.addImage(img, 'JPEG', 0, pos, W, imgH); left -= H; }
+    return { pdf, fileName: `فاکتور-${$('invoiceNo').value}-${name}.pdf` };
+  } catch(e) { console.error(e); toast('⚠️ خطا در ساخت PDF.'); return null; }
+  finally { inv.classList.remove('exporting'); }
+}
+const pdfB64 = pdf => pdf.output('datauristring').split(',')[1];
+async function savePDF(){
+  const r = await buildPDF(); if (!r) return;
+  if (window.AndroidBridge) AndroidBridge.saveFile(pdfB64(r.pdf), r.fileName, 'application/pdf');
+  else { r.pdf.save(r.fileName); toast('✅ فایل PDF ذخیره شد.'); }
+}
+async function sharePDF(){
+  const r = await buildPDF(); if (!r) return;
+  if (window.AndroidBridge) AndroidBridge.shareFile(pdfB64(r.pdf), r.fileName, 'application/pdf');
+}
+function printPage(){ if (window.AndroidBridge) AndroidBridge.print(); else window.print(); }
+
+/* ---------- شروع ---------- */
+function init(){
+  if (window.AndroidBridge) document.body.classList.add('android');
+  initLogo();
+  const logo = localStorage.getItem('logo'); if (logo) setLogo(logo, false);
+  const setTheme = t => { document.body.dataset.theme = t; $('themeSel').value = t; };
+  setTheme(localStorage.getItem('theme') || 'forest');
+  $('themeSel').addEventListener('change', e => { setTheme(e.target.value); store.set('theme', e.target.value); });
+
+  MONEY.forEach(id => $(id).addEventListener('blur', () => fmtInput($(id))));
+  $('rowsBody').addEventListener('input', calc);
+  MONEY.forEach(id => $(id).addEventListener('input', calc));
+  $('unitSel').addEventListener('change', () => { calc(); autosave(); });
+  $('invoice').addEventListener('input', autosave);
+  $('cardNumber').addEventListener('input', autosave);
+  $('shebaNumber').addEventListener('input', autosave);
+  $('searchBox').addEventListener('input', renderList);
+  $('importInput').addEventListener('change', e => { if (e.target.files[0]) importJSON(e.target.files[0]); e.target.value = ''; });
+  $('loadModal').addEventListener('click', e => { if (e.target === $('loadModal')) closeModal(); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); saveAll(); }
+  });
+  window.addEventListener('beforeunload', () => store.set(DRAFT, collect()));
+
+  const draft = store.get(DRAFT);
+  if (draft) { apply(draft); toast('پیش‌نویس قبلی بازیابی شد.'); return; }
+  apply({ invoiceNo: nextNo(), invoiceDate: today() });
+}
+return { addRow, saveAll, newInvoice, savePDF, showLoadDialog, closeModal, exportJSON, init, sharePDF, printPage };
+})();
+window.addEventListener('DOMContentLoaded', () => InvoiceApp.init());
+</script>
+</body>
+</html>
